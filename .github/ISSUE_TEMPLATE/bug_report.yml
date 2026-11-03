@@ -1,0 +1,39 @@
+name: Bug report
+description: Something does not work as documented
+labels: ["bug"]
+body:
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: What did you expect, and what happened instead?
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: How to reproduce
+      description: The command or Python script you ran, plus the config file if any. Attach or link the mesh if you can share it.
+      render: shell
+    validations:
+      required: true
+  - type: textarea
+    id: output
+    attributes:
+      label: Error output or wrong numbers
+      description: Full traceback, or the relevant part of metrics.json.
+      render: text
+  - type: input
+    id: version
+    attributes:
+      label: meshsim version
+      description: Output of `meshsim --version`
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: OS and Python version
+      placeholder: e.g. macOS 15 arm64, Python 3.12
+    validations:
+      required: true
