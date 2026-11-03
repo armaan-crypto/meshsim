@@ -1,0 +1,59 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "meshsim"
+version = "0.1.0"
+description = "Accessible physics-based testing for 3D designs"
+readme = "README.md"
+license = "Apache-2.0"
+license-files = ["LICENSE"]
+authors = [{ name = "Armaan" }]
+requires-python = ">=3.10"
+keywords = ["simulation", "physics", "3d", "cad", "pybullet", "engineering"]
+classifiers = [
+    "Development Status :: 2 - Pre-Alpha",
+    "Intended Audience :: Science/Research",
+    "Intended Audience :: Manufacturing",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Physics",
+]
+dependencies = [
+    "numpy>=1.23",
+    "trimesh>=4.0",
+    "scipy>=1.9",  # trimesh uses it for convex hulls
+    "pybullet>=3.2.5",
+    "matplotlib>=3.6",
+    "pillow>=9.0",
+    "pyyaml>=6.0",
+]
+
+[project.optional-dependencies]
+video = ["imageio>=2.28", "imageio-ffmpeg>=0.4.8"]
+step = ["cascadio>=0.0.13"]
+dev = ["pytest>=7.0", "ruff>=0.5"]
+
+[project.scripts]
+meshsim = "meshsim.cli:main"
+
+[project.urls]
+Repository = "https://github.com/armaan-crypto/meshsim"
+Issues = "https://github.com/armaan-crypto/meshsim/issues"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/meshsim"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP"]
+ignore = ["E741"]
