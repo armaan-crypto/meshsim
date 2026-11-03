@@ -1,0 +1,14 @@
+# Example config for `meshsim run <model> --config examples/wedge_ramp.yaml`.
+# Any key here can also be passed as a CLI flag, which takes precedence.
+env: ramp
+env_params:
+  angle: 25          # degrees
+  length: 3.0        # m along the slope
+  start_distance: 2.5
+duration: 5.0        # s
+density: 1200        # kg/m^3, roughly ABS/PLA
+friction: 0.3
+restitution: 0.1
+gravity: 9.81
+timestep: 0.004166666666666667  # 1/240 s
+initial_orientation: [0, 0, 0]  # roll, pitch, yaw in degrees
