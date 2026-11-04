@@ -36,3 +36,6 @@ coverage.xml
 # meshsim outputs
 meshsim_output/
 examples/output/
+
+# Local agent workspace (research notes, drafts, reports)
+growth/
