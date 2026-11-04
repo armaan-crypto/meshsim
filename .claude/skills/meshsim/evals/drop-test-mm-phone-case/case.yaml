@@ -1,0 +1,6 @@
+schema_version: "1.1"
+name: drop-test-mm-phone-case
+expected_outcome: |
+  Claude notices the STL is in millimeters and simulates it at scale 0.001 (about 80 x 160 x 12 mm), runs a drop test from 1.2 m with a TPU-like density (around 1200 kg/m3), reports an impact speed close to sqrt(2*9.81*1.2) = 4.85 m/s, describes the bounce behavior from a run whose timestep is small enough that the thin case does not sink into the floor (about 0.12 m rebound at 1/1000 s), states the assumed material values, and explains that meshsim treats the case as rigid so it cannot predict damage.
+context:
+  scaffold_script: place-files.sh

@@ -1,0 +1,6 @@
+schema_version: "1.1"
+name: ramp-friction-threshold
+expected_outcome: |
+  Claude simulates the wedge (already in meters) on a 20 degree ramp with friction 0.4, finds it stays put (negligible distance traveled), and identifies the slip angle as about arctan(0.4) = 21.8 degrees, ideally confirming with runs just below and above that angle. It explains that sliding starts when tan(angle) exceeds the friction coefficient.
+context:
+  scaffold_script: place-files.sh

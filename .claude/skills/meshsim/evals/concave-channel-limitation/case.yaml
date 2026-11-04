@@ -1,0 +1,6 @@
+schema_version: "1.1"
+name: concave-channel-limitation
+expected_outcome: |
+  Claude runs the U-channel on a 30 degree ramp with friction 0.25 and reports that it slides and how far it travels. Claude notices the part is concave (the inspection helper flags it) and explains that meshsim collides parts as their convex hull, so it cannot simulate a ball sitting inside the channel; it does not pretend to answer that part with a simulation.
+context:
+  scaffold_script: place-files.sh
