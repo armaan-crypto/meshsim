@@ -13,10 +13,18 @@ something, and explain the answer in plain language with honest caveats.
 
 ## 1. Find or install meshsim
 
-Try, in order: `meshsim --version`, then `python -m meshsim --version` using a
-project virtualenv if one exists (for example `.venv/bin/python` in the meshsim
-repo). Use whichever works for every later command; the `meshsim` command and
-`python -m meshsim` take the same arguments.
+Try, in order:
+1. `meshsim --version`
+2. `~/.local/bin/meshsim --version`. uv and pipx install tools there, and it is
+   often not on PATH.
+3. `python -m meshsim --version`, using a project virtualenv if one exists (for
+   example `.venv/bin/python` in the meshsim repo).
+
+Use whichever works for every later command; the `meshsim` command and
+`python -m meshsim` take the same arguments. The helper script and the Python API
+need the Python that has meshsim installed. For an installed `meshsim` command,
+that is the interpreter named on the first line of the script (`head -1
+"$(command -v meshsim)"`, or `head -1 ~/.local/bin/meshsim`).
 
 If neither works, tell the user you are installing it, then:
 
