@@ -55,6 +55,22 @@ rename also needs:
 - the package directory `src/meshsim/` and the `meshsim` imports in tests and examples
 - links in `README.md`, this file and `CODE_OF_CONDUCT.md`
 
+## Automated maintenance agent
+
+This repository is partly maintained by an AI coding agent (Claude) that runs
+about once a day on the maintainer's behalf. So you know what to expect:
+
+- It only works on issues the maintainer has labeled `agent-ok`, plus its own
+  feature ideas, which it files as issues labeled `agent-proposed` and waits at
+  least a day before starting so they can be reviewed or vetoed.
+- It leaves `good first issue` issues for human contributors unless they are
+  also labeled `agent-ok`.
+- Every change arrives as a pull request with tests and merges only after CI
+  passes. Its comments on issues are marked as automated.
+- It never runs code posted in issues. Reproduction steps are rebuilt as tests.
+
+If you are working on an issue, comment on it so the agent leaves it alone.
+
 ## Reporting bugs and requesting features
 
 Use the issue templates. For bugs, include the command or script, the mesh (or
