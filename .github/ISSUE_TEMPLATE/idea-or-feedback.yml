@@ -1,0 +1,23 @@
+name: Idea or feedback
+description: Suggest an idea, share feedback, or ask for a change (works well from a phone)
+labels: ["owner-feedback"]
+body:
+  - type: dropdown
+    id: kind
+    attributes:
+      label: What kind?
+      options:
+        - New feature idea
+        - Change to something that exists
+        - Way to get more people using meshsim
+        - Feedback on the automated agents
+        - Something is broken
+    validations:
+      required: true
+  - type: textarea
+    id: details
+    attributes:
+      label: Tell us
+      description: A sentence or two is enough. Rough ideas are welcome; they get developed into a proper plan.
+    validations:
+      required: true
