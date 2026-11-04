@@ -86,6 +86,28 @@ result.save("out/")  # trajectory.csv, metrics.json, plot.png
 keyword overrides for any config field. `env` can also be an `Environment`
 instance, e.g. `Terrain(heightmap=my_numpy_array, cell_size=0.5)`.
 
+### Use it from Claude
+
+The repo includes a [Claude Code skill](.claude/skills/meshsim/SKILL.md) that
+teaches Claude to run meshsim for you. Ask a physical question about a model in
+plain language, for example "drop phone_case.stl from 1.2 m in TPU, how fast
+does it hit?". Claude then:
+- checks the mesh's units, closedness and shape with a bundled helper script
+- picks the environment and material values
+- runs the simulation and sanity-checks the result against simple physics
+- explains the answer with the relevant caveats
+
+The skill loads automatically when Claude Code runs inside this repo. To use it
+in any project, copy the folder to your personal skills directory:
+
+```bash
+cp -r .claude/skills/meshsim ~/.claude/skills/
+```
+
+Its test cases live in `.claude/skills/meshsim/evals/`. In Claude Code you can
+run them with `claude plugin eval .claude/skills/meshsim --scaffold --allow-tools Write,Edit,Bash`.
+These are real model runs and are billed.
+
 ## Example output
 
 `python examples/cube_drop.py`: a 20 cm aluminium cube dropped from 1.5 m,
@@ -189,6 +211,11 @@ g(sin θ − μ cos θ)·t within 5%.
   floor with restitution > 0, Bullet resolves the bounce at a single corner on
   the first contact step, which adds spurious spin. Real drops are rarely
   perfectly flat; a tilt of a few degrees (`--orientation 4 3 0`) avoids it.
+- **Thin parts and fast impacts need a smaller timestep.** A part moves
+  `speed × timestep` per step (2 cm at 5 m/s with the default 1/240 s). When
+  that approaches the part's thickness, it sinks into the floor on impact and
+  bounces become unreliable. Use `--timestep 0.001` and check the result
+  doesn't change when you halve it again.
 - **Peak acceleration during impacts** depends on the timestep and the contact
   model of a rigid-body solver. Use it to compare designs under the same
   settings, not as an absolute shock value.
