@@ -55,6 +55,29 @@ rename also needs:
 - the package directory `src/meshsim/` and the `meshsim` imports in tests and examples
 - links in `README.md`, this file and `CODE_OF_CONDUCT.md`
 
+## Releasing
+
+The version lives only in `pyproject.toml`; `meshsim.__version__` reads it from
+the installed package. To release (maintainer only):
+
+1. Open a pull request that bumps `version` in `pyproject.toml`, and merge it.
+2. Create a GitHub release from `main` with the tag `v<version>`, for example
+   `v0.1.0`.
+
+Publishing the release runs `.github/workflows/release.yml`. It stops if the tag
+doesn't match the version, builds the sdist and wheel, runs the tests against the
+wheel, then uploads to PyPI with trusted publishing, so there are no API tokens
+to store. PyPI never lets a version be uploaded twice: if a release fails after
+the upload, bump the version and release again.
+
+One-time setup, before the first release: on pypi.org, under
+[Publishing](https://pypi.org/manage/account/publishing/), add a pending publisher
+with project `meshsim`, owner `armaan-crypto`, repository `meshsim`, workflow
+`release.yml` and environment `pypi`.
+
+After the first release is live, change the install instructions in `README.md`
+and `.claude/skills/meshsim/SKILL.md` to `pip install meshsim`.
+
 ## Automated maintenance agent
 
 This repository is partly maintained by an AI coding agent (Claude) that runs
