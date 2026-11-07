@@ -68,10 +68,23 @@ Act on what it reports, because each of these silently changes the answer:
 |---|---|---|
 | Impact speed, bounce, landing from a height | `drop` | `-p height=H` (gap between lowest point and floor, m) |
 | Does it slide or stay on a slope? How far does it go? | `ramp` | `-p angle=DEG`, `--friction MU` |
-| Does it tip over, where does it rest, is it stable? | `flat` | `--orientation R P Y` to start it tilted; `--velocity` to push it |
+| How far can it tilt? Will it tip if loaded? | none: `meshsim stability`, no simulation | `--add-mass KG --at X Y Z` for a load, `--list-poses` for "which way up will it land?" (needs `meshsim[poses]`) |
+| Does it tip if pushed or bumped? Where does it rest? | `flat` | `--velocity` to push it (try the weakest direction from `meshsim stability`), `--orientation R P Y` to start it tilted |
 | Behavior on uneven ground or a scan | `terrain` | `-p heightmap=FILE` or `-p mesh=FILE`, `-p cell_size=`, `-p height_scale=` |
 
 Run `meshsim envs` to see every environment parameter and its default.
+
+For "does it tip over?", run `meshsim stability` first, then a `flat` push test if
+the question involves a tap or bump:
+
+```bash
+meshsim stability stand.stl --scale 0.001 --density 1240 --add-mass 0.2 --at 0 0.03 0.06
+```
+
+Report the minimum angle and direction. Say that a load is modeled as a point mass
+and the part as rigid, and that the angle is static: a push or a bounce can tip it
+sooner, and a part with low friction may slide first (when tan θ is above μ).
+`--at` is in meters along the part's own axes after `--scale`.
 
 Physical inputs: pick density, friction and restitution from the material and
 surface the user describes. `references/materials.md` has typical values. Tell
@@ -122,7 +135,8 @@ Read `metrics.json` in the output folder. The fields that answer most questions:
 | `peak_acceleration_g` | Highest acceleration of the center of mass. During impacts this depends on timestep and contact stiffness: use it to compare designs under identical settings, never as an absolute shock rating |
 | `settled`, `settle_time_s` | Whether and when it came to rest (stayed below speed thresholds for `settle_window` s). If `settled` is false, rerun with a longer `--duration` before concluding it never stops |
 | `total_distance_m`, `net_displacement_m` | Path length, and straight-line distance from start to finish. Near 0 on a ramp means it held |
-| `final_position_m`, `final_orientation_euler_deg` | Where it ended up and how it's rotated (degrees, relative to the mesh's own axes). A large final roll or pitch means it tipped |
+| `final_position_m`, `final_orientation_euler_deg` | Where it ended up and how it's rotated (degrees, relative to the mesh's own axes) |
+| `tipped_over`, `max_tilt_deg` | Whether it ended more than 45° (`--tip-threshold`) from its starting up axis, and the largest tilt along the way. A large `max_tilt_deg` with `tipped_over` false means it rocked or flipped all the way round. On a ramp, sliding onto the flat run-out alone turns it by the ramp angle |
 | `model.mass_kg` | Check this matches reality. A wrong mass usually means wrong units or density |
 
 Look at `plot.png` with your image-reading tool. It shows position, speed with
@@ -137,6 +151,7 @@ gives the user confidence:
 - Ramp at angle θ: a block slides when the effective friction is below tan θ, and
   its speed along the slope grows at g(sin θ − μ cos θ).
 - Impact energy: ½ m v², with m from `model.mass_kg`.
+- Tip angle: about atan(half base width / center-of-mass height) for box-like parts.
 
 If the simulation disagrees noticeably with these, investigate (units, start
 orientation, the part rolling instead of sliding) before reporting.

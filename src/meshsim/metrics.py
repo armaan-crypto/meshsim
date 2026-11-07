@@ -6,9 +6,20 @@ from typing import Any
 
 import numpy as np
 
-from ._rotation import quat_to_euler_deg
+from ._rotation import quat_conjugate, quat_multiply, quat_to_euler_deg
 
 STANDARD_GRAVITY = 9.80665
+
+
+def _tilt_from_start_deg(quats: np.ndarray) -> np.ndarray:
+    """Angle between each orientation's up axis and the up axis at the start, degrees.
+
+    "Up" is the world Z direction at t=0, carried along with the body. Spin about
+    that axis does not count.
+    """
+    relative = quat_multiply(quats, quat_conjugate(quats[0]))
+    cos_tilt = 1 - 2 * (relative[:, 0] ** 2 + relative[:, 1] ** 2)
+    return np.degrees(np.arccos(np.clip(cos_tilt, -1.0, 1.0)))
 
 
 def compute_metrics(
@@ -16,6 +27,7 @@ def compute_metrics(
     settle_speed: float,
     settle_angular_speed: float,
     settle_window: float,
+    tip_threshold: float = 45.0,
 ) -> dict[str, Any]:
     """Compute summary metrics.
 
@@ -27,6 +39,9 @@ def compute_metrics(
       last step before contact.
     - settle time: start of the final stretch where linear and angular speed
       stay under their thresholds; it must last at least ``settle_window``.
+    - tilt: how far the up axis has turned from where it started. ``tipped_over``
+      means it ends more than ``tip_threshold`` degrees away. A part that flips
+      all the way round ends near 0, so check ``max_tilt_deg`` too.
     """
     t = traj["time"]
     pos = np.column_stack([traj["x"], traj["y"], traj["z"]])
@@ -53,6 +68,7 @@ def compute_metrics(
 
     steps = np.linalg.norm(np.diff(pos, axis=0), axis=1)
     final_q = np.array([traj["qx"][-1], traj["qy"][-1], traj["qz"][-1], traj["qw"][-1]])
+    tilt = _tilt_from_start_deg(np.column_stack([traj["qx"], traj["qy"], traj["qz"], traj["qw"]]))
 
     return {
         "duration_s": float(t[-1]),
@@ -72,4 +88,6 @@ def compute_metrics(
         "final_position_m": pos[-1].tolist(),
         "final_orientation_quat_xyzw": final_q.tolist(),
         "final_orientation_euler_deg": quat_to_euler_deg(final_q).tolist(),
+        "max_tilt_deg": float(tilt.max()),
+        "tipped_over": bool(tilt[-1] > tip_threshold),
     }
