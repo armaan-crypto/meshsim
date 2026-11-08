@@ -3,6 +3,7 @@
 from ._meta import PROJECT_NAME, __version__
 from .config import SimConfig
 from .environments import ENVIRONMENTS, Environment, make_environment, register_environment
+from .inspection import describe_inspection, inspect_mesh
 from .mesh import compute_body_properties, load_mesh
 from .simulation import Simulation, SimulationResult
 from .stability import TipResult, stable_poses, tip_angles
@@ -17,6 +18,8 @@ __all__ = [
     "TipResult",
     "__version__",
     "compute_body_properties",
+    "describe_inspection",
+    "inspect_mesh",
     "load_mesh",
     "make_environment",
     "register_environment",

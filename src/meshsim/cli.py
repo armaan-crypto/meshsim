@@ -68,6 +68,7 @@ def build_parser() -> argparse.ArgumentParser:
     stability.add_argument("--json", metavar="FILE", help="Also write the results to a JSON file")
 
     sub.add_parser("envs", help="List environments and their parameters")
+    sub.add_parser("mcp", help="Serve meshsim's tools to MCP clients over stdio (needs the 'mcp' extra)")
     return parser
 
 
@@ -172,6 +173,13 @@ def _envs() -> int:
     return 0
 
 
+def _mcp() -> int:
+    from .mcp_server import serve
+
+    serve()
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
     try:
@@ -179,6 +187,8 @@ def main(argv: list[str] | None = None) -> int:
             return _run(args)
         if args.command == "stability":
             return _stability(args)
+        if args.command == "mcp":
+            return _mcp()
         return _envs()
     except (FileNotFoundError, ValueError, ImportError) as exc:
         print(f"error: {exc}", file=sys.stderr)
