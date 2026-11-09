@@ -1,7 +1,7 @@
 # meshsim
 
 [![CI](https://github.com/armaan-crypto/meshsim/actions/workflows/ci.yml/badge.svg)](https://github.com/armaan-crypto/meshsim/actions/workflows/ci.yml)
-[![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
+[![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](https://github.com/armaan-crypto/meshsim/blob/main/LICENSE)
 
 Physics-based testing for 3D designs. Load a mesh, put it in an environment
 (flat ground, a ramp, a drop test, or terrain from a heightmap or scan), run a
@@ -88,7 +88,7 @@ instance, e.g. `Terrain(heightmap=my_numpy_array, cell_size=0.5)`.
 
 ### Use it from Claude
 
-The repo includes a [Claude Code skill](.claude/skills/meshsim/SKILL.md) that
+The repo includes a [Claude Code skill](https://github.com/armaan-crypto/meshsim/blob/main/.claude/skills/meshsim/SKILL.md) that
 teaches Claude to run meshsim for you. Ask a physical question about a model in
 plain language, for example "drop phone_case.stl from 1.2 m in TPU, how fast
 does it hit?". Claude then:
@@ -114,12 +114,12 @@ These are real model runs and are billed.
 tilted a few degrees. The run reports first contact at 0.558 s (theory
 √(2h/g) = 0.553 s) and impact speed 5.44 m/s (theory √(2gh) = 5.42 m/s).
 
-![Plot from the cube drop example](docs/example_plot.png)
+![Plot from the cube drop example](https://raw.githubusercontent.com/armaan-crypto/meshsim/main/docs/example_plot.png)
 
 `examples/wedge_ramp.py` with friction 0.15: a wedge sliding down a 25° ramp
 onto the floor (GIF written with `--render`).
 
-![Wedge sliding down a ramp](docs/example_ramp.gif)
+![Wedge sliding down a ramp](https://raw.githubusercontent.com/armaan-crypto/meshsim/main/docs/example_ramp.gif)
 
 ## Environments
 
@@ -163,7 +163,7 @@ render_format: gif     # or mp4 (needs the [video] extra)
 
 Also available: `linear_damping`, `angular_damping`, `settle_speed`,
 `settle_angular_speed`, `settle_window`, `render_fps`, `render_size`, `plot`,
-`output_dir`. See [`src/meshsim/config.py`](src/meshsim/config.py) for what each
+`output_dir`. See [`src/meshsim/config.py`](https://github.com/armaan-crypto/meshsim/blob/main/src/meshsim/config.py) for what each
 one does. Unknown keys and invalid values are rejected with an error.
 
 ## Outputs
@@ -240,11 +240,11 @@ Planned, not built yet:
 ## Contributing
 
 Contributions are welcome, from bug reports to new environments. See
-[CONTRIBUTING.md](CONTRIBUTING.md) for setup, tests and style, and look for
+[CONTRIBUTING.md](https://github.com/armaan-crypto/meshsim/blob/main/CONTRIBUTING.md) for setup, tests and style, and look for
 issues labeled
 [good first issue](https://github.com/armaan-crypto/meshsim/labels/good%20first%20issue).
-Please follow the [Code of Conduct](CODE_OF_CONDUCT.md).
+Please follow the [Code of Conduct](https://github.com/armaan-crypto/meshsim/blob/main/CODE_OF_CONDUCT.md).
 
 ## License
 
-[Apache 2.0](LICENSE). Copyright 2026 Armaan.
+[Apache 2.0](https://github.com/armaan-crypto/meshsim/blob/main/LICENSE). Copyright 2026 Armaan.
