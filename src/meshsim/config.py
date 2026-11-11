@@ -55,6 +55,8 @@ class SimConfig:
     """Angular speed (rad/s) below which the object counts as at rest."""
     settle_window: float = 0.25
     """Seconds the object must stay at rest at the end of the run to count as settled."""
+    tip_threshold: float = 45.0
+    """Final tilt in degrees from the starting up axis above which the object counts as tipped over."""
 
     output_dir: str = f"{PROJECT_NAME}_output"
     plot: bool = True
@@ -91,6 +93,8 @@ class SimConfig:
                 raise ValueError(f"{name} must be >= 0, got {getattr(self, name)}")
         if not 0.0 <= self.restitution <= 1.0:
             raise ValueError(f"restitution must be between 0 and 1, got {self.restitution}")
+        if not 0.0 < self.tip_threshold < 180.0:
+            raise ValueError(f"tip_threshold must be between 0 and 180 degrees, got {self.tip_threshold}")
         if self.timestep > self.duration:
             raise ValueError("timestep must be smaller than duration")
         if self.render_format not in ("gif", "mp4"):

@@ -110,7 +110,9 @@ class Simulation:
         finally:
             client.disconnect()
 
-        metrics = compute_metrics(traj, cfg.settle_speed, cfg.settle_angular_speed, cfg.settle_window)
+        metrics = compute_metrics(
+            traj, cfg.settle_speed, cfg.settle_angular_speed, cfg.settle_window, cfg.tip_threshold
+        )
         return SimulationResult(
             trajectory=traj,
             metrics=metrics,

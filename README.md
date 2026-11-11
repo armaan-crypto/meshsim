@@ -19,8 +19,9 @@ rigid-body simulation, and get numbers and pictures back.
 - Simulates the part as a rigid body with [PyBullet](https://pybullet.org) in one
   of four environments: `flat`, `ramp`, `drop`, `terrain`.
 - Writes a trajectory CSV, a metrics JSON (peak acceleration, peak impact
-  velocity, settle time, final pose, distance traveled), a PNG plot, and
+  velocity, settle time, final pose, tilt, distance traveled), a PNG plot, and
   optionally a GIF or MP4 animation.
+- Computes static tip-over angles with `meshsim stability`, without a simulation.
 - Works the same from the command line and from Python.
 
 ## Who it is for
@@ -66,6 +67,7 @@ meshsim run part.stl                                      # rest on flat ground 
 meshsim run part.stl --env ramp -p angle=25 --friction 0.3 --duration 5
 meshsim run part.stl --env drop -p height=1.5 --render     # adds render.gif
 meshsim run part_mm.stl --scale 0.001 --density 2700       # mm STL, aluminium
+meshsim stability part.stl                                # tip-over angles, no simulation
 meshsim envs                                              # list environments and parameters
 ```
 
@@ -138,6 +140,42 @@ surfaces' values. Environment surfaces default to 1.0, so by default the part's
 own `friction` and `restitution` are the effective values. Setting a surface
 value (e.g. `-p friction=0.5` on the ramp) scales them.
 
+## Stability
+
+`meshsim stability` answers "how far can this tilt before it tips?" from geometry
+alone. It finds the support polygon of the part in its resting pose and, for each
+direction, the tilt at which the vertical through the center of mass leaves that
+polygon: tan θ = distance to the edge / center-of-mass height.
+
+```bash
+meshsim stability part_mm.stl --scale 0.001 --density 1240
+meshsim stability stand.stl --scale 0.001 --density 1240 --add-mass 0.2 --at 0 0.03 0.06 --json stability.json
+meshsim stability part.stl --list-poses   # which way up will it land? needs pip install 'meshsim[poses]'
+```
+
+It prints the minimum tip angle and its direction, the angle in each of
+`--directions` evenly spaced directions, the center-of-mass height and the size of
+the support polygon. Azimuths are measured from +X toward +Y and name the way the
+part tips. `--add-mass` adds one point mass at `--at`, given in meters along the
+part's own axes after `--scale`. A part that has no support area, or whose center
+of mass is outside it, is reported as unable to rest in that pose.
+
+From Python: `meshsim.tip_angles(mesh, ...)` and `meshsim.stable_poses(mesh, ...)`.
+
+The angle is a static estimate. It ignores dynamics, so a push or a bounce can tip
+a part below it, and it assumes the part doesn't slide first (sliding needs
+tan θ above the friction coefficient). To test a push, use a `flat` run with
+`--velocity` and read `tipped_over` and `max_tilt_deg` from `metrics.json`:
+
+- `max_tilt_deg` is the largest angle between the part's starting up axis and its
+  current one. Spin about that axis doesn't count.
+- `tipped_over` is true when the part ends more than `tip_threshold` degrees
+  (default 45) from its starting up axis.
+
+Both are relative to how the part started. On a `ramp`, a part that slides
+onto the flat run-out turns by the ramp angle without tipping, so check the plot
+for steep ramps.
+
 ## Configuration
 
 Every setting can come from a YAML file, CLI flags, or Python keyword
@@ -162,8 +200,8 @@ render_format: gif     # or mp4 (needs the [video] extra)
 ```
 
 Also available: `linear_damping`, `angular_damping`, `settle_speed`,
-`settle_angular_speed`, `settle_window`, `render_fps`, `render_size`, `plot`,
-`output_dir`. See [`src/meshsim/config.py`](https://github.com/armaan-crypto/meshsim/blob/main/src/meshsim/config.py) for what each
+`settle_angular_speed`, `settle_window`, `tip_threshold`, `render_fps`,
+`render_size`, `plot`, `output_dir`. See [`src/meshsim/config.py`](https://github.com/armaan-crypto/meshsim/blob/main/src/meshsim/config.py) for what each
 one does. Unknown keys and invalid values are rejected with an error.
 
 ## Outputs
@@ -171,7 +209,7 @@ one does. Unknown keys and invalid values are rejected with an error.
 | File | Contents |
 |---|---|
 | `trajectory.csv` | One row per physics step: time, center-of-mass position, orientation quaternion (of the original mesh axes), linear and angular velocity, speed, acceleration, contact flag |
-| `metrics.json` | Model info (mass, volume, inertia, watertightness), environment, full config, and metrics: `peak_acceleration_m_s2`/`_g`, `peak_impact_velocity_m_s`, `first_contact_time_s`, `impact_count`, `settle_time_s`, `final_position_m`, `final_orientation_quat_xyzw`/`_euler_deg`, `total_distance_m`, `net_displacement_m`, `max_speed_m_s` |
+| `metrics.json` | Model info (mass, volume, inertia, watertightness), environment, full config, and metrics: `peak_acceleration_m_s2`/`_g`, `peak_impact_velocity_m_s`, `first_contact_time_s`, `impact_count`, `settle_time_s`, `final_position_m`, `final_orientation_quat_xyzw`/`_euler_deg`, `max_tilt_deg`, `tipped_over`, `total_distance_m`, `net_displacement_m`, `max_speed_m_s` |
 | `plot.png` | Position, speed (with impacts and settle time marked), acceleration, and a side-view path |
 | `render.gif` / `render.mp4` | Optional animation, rendered with PyBullet's CPU renderer (no GPU or display needed) |
 
@@ -198,7 +236,9 @@ one does. Unknown keys and invalid values are rejected with an error.
 
 The test suite checks the physics against closed-form results: free-fall time
 √(2h/g) and impact speed √(2gh) within 2%, and sliding speed on a ramp
-g(sin θ − μ cos θ)·t within 5%.
+g(sin θ − μ cos θ)·t within 5%. Static tip angles match atan(half base / center-of-mass
+height), and a box on a high-friction ramp stays up 2.4° below its computed tip angle and
+tips 2.6° above it.
 
 ## Known limitations
 
