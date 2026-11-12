@@ -37,6 +37,10 @@ which takes a few minutes. On macOS, if the build fails in `zutil.c`, run
 `CFLAGS="-Dfdopen=fdopen" pip install pybullet` first. Add `[video]` to the
 install for MP4 output.
 
+If a `meshsim` MCP server is connected, you may call its `inspect_mesh`,
+`list_environments` and `run_simulation` tools instead of the commands below,
+with absolute paths. The inspect-first workflow and the result checks stay the same.
+
 ## 2. Inspect the mesh before simulating
 
 Run the bundled helper with the same Python that has meshsim:

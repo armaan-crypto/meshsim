@@ -42,7 +42,8 @@ pip install "git+https://github.com/armaan-crypto/meshsim"
 ```
 
 Optional extras: `[video]` for MP4 output (imageio + ffmpeg), `[step]` for STEP
-files (cascadio), `[dev]` for tests and linting.
+files (cascadio), `[poses]` for `meshsim stability --list-poses` (networkx), `[mcp]`
+for the MCP server (official `mcp` SDK), `[dev]` for tests and linting.
 
 ```bash
 git clone https://github.com/armaan-crypto/meshsim && cd meshsim
@@ -109,6 +110,42 @@ cp -r .claude/skills/meshsim ~/.claude/skills/
 Its test cases live in `.claude/skills/meshsim/evals/`. In Claude Code you can
 run them with `claude plugin eval .claude/skills/meshsim --scaffold --allow-tools Write,Edit,Bash`.
 These are real model runs and are billed.
+
+### Use it from any MCP client
+
+`meshsim mcp` serves meshsim over stdio to Claude Desktop, Cursor and other
+[MCP](https://modelcontextprotocol.io) clients. Install the extra first:
+
+```bash
+pip install "meshsim[mcp] @ git+https://github.com/armaan-crypto/meshsim"
+```
+
+For Claude Code:
+
+```bash
+claude mcp add meshsim -- meshsim mcp
+```
+
+For Claude Desktop, add this to `claude_desktop_config.json`. If `meshsim` is not
+on the PATH Claude Desktop sees, use its full path as `command`:
+
+```json
+{
+  "mcpServers": {
+    "meshsim": { "command": "meshsim", "args": ["mcp"] }
+  }
+}
+```
+
+| Tool | What it does |
+| --- | --- |
+| `inspect_mesh(path, scale)` | Likely units and suggested scale; watertight, concave and flat-bottom flags |
+| `list_environments()` | The same content as `meshsim envs` |
+| `run_simulation(path, env, env_params, duration, scale, density, mass, friction, restitution, orientation, velocity, timestep, render, out_dir)` | Runs and saves a simulation; returns the metrics and the output file paths |
+
+Give absolute paths: the client decides the server's working directory. Without
+`out_dir`, each run gets a new folder under `./meshsim_output/`. Invalid inputs
+come back as tool errors with the same messages as the CLI.
 
 ## Example output
 
