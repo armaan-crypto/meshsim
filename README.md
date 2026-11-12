@@ -42,8 +42,8 @@ pip install "git+https://github.com/armaan-crypto/meshsim"
 ```
 
 Optional extras: `[video]` for MP4 output (imageio + ffmpeg), `[step]` for STEP
-files (cascadio), `[mcp]` for the MCP server (official `mcp` SDK), `[dev]` for tests
-and linting.
+files (cascadio), `[poses]` for `meshsim stability --list-poses` (networkx), `[mcp]`
+for the MCP server (official `mcp` SDK), `[dev]` for tests and linting.
 
 ```bash
 git clone https://github.com/armaan-crypto/meshsim && cd meshsim
